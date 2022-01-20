@@ -1,7 +1,6 @@
 import React, { FormEvent } from "react";
 import * as qs from "qs";
-import { cleanObject } from "../../utils";
-import { useAuth } from "../../context/auth-context";
+import { useAuth } from "../context/auth-context";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
