@@ -10,14 +10,13 @@ import styled from "@emotion/styled";
 import { Typography } from "antd";
 import { useAsync } from "../../utils/use-async";
 import { useProjects } from "../../utils/project";
+import { useUrlQueryParam } from "../../utils/url";
 const apiUrl = process.env.REACT_APP_API_URL;
 export const ProjectListScreen = () => {
   const [users, setUsers] = useState([]);
 
-  const [param, setParam] = useState({
-    name: "",
-    personId: "",
-  });
+  //基本类型可以放在依赖里;组件状态可以放在依赖里;非组件组件状态的对象绝不可以放在依赖里
+  const [param, setParam] = useUrlQueryParam(["name", "personId"]);
   const debouncedParam = useDebounce(param, 200);
   const client = useHttp();
   const { isLoading, error, data: list } = useProjects(debouncedParam);
@@ -28,7 +27,7 @@ export const ProjectListScreen = () => {
   return (
     <Container>
       <h1>项目列表</h1>
-      <SearchPanel users={users} param={param} setParam={setParam} />
+      <SearchPanel users={users || []} param={param} setParam={setParam} />
       {error ? (
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
@@ -36,6 +35,8 @@ export const ProjectListScreen = () => {
     </Container>
   );
 };
+
+ProjectListScreen.whyDidYouRender = false;
 const Container = styled.div`
   padding: 3.2rem;
 `;
