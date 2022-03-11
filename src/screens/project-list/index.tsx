@@ -11,15 +11,16 @@ import { Typography } from "antd";
 import { useAsync } from "../../utils/use-async";
 import { useProjects } from "../../utils/project";
 import { useUrlQueryParam } from "../../utils/url";
+import { useProjectsSearchParams } from "./util";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 export const ProjectListScreen = () => {
   const [users, setUsers] = useState([]);
 
   //基本类型可以放在依赖里;组件状态可以放在依赖里;非组件组件状态的对象绝不可以放在依赖里
-  const [param, setParam] = useUrlQueryParam(["name", "personId"]);
-  const debouncedParam = useDebounce(param, 200);
+  const [param, setParam] = useProjectsSearchParams();
   const client = useHttp();
-  const { isLoading, error, data: list } = useProjects(debouncedParam);
+  const { isLoading, error, data: list } = useProjects(useDebounce(param, 200));
 
   useMount(() => {
     client("users").then(setUsers);
