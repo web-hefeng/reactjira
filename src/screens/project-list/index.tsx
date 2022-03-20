@@ -7,7 +7,7 @@ import * as qs from "qs";
 import { useAuth } from "../../context/auth-context";
 import { useHttp } from "../../utils/http";
 import styled from "@emotion/styled";
-import { Typography } from "antd";
+import { Typography, Button } from "antd";
 import { useAsync } from "../../utils/use-async";
 import { useProjects } from "../../utils/project";
 import { useUrlQueryParam } from "../../utils/url";
@@ -20,7 +20,12 @@ export const ProjectListScreen = () => {
   //基本类型可以放在依赖里;组件状态可以放在依赖里;非组件组件状态的对象绝不可以放在依赖里
   const [param, setParam] = useProjectsSearchParams();
   const client = useHttp();
-  const { isLoading, error, data: list } = useProjects(useDebounce(param, 200));
+  const {
+    isLoading,
+    error,
+    data: list,
+    retry,
+  } = useProjects(useDebounce(param, 200));
 
   useMount(() => {
     client("users").then(setUsers);
@@ -32,7 +37,12 @@ export const ProjectListScreen = () => {
       {error ? (
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
-      <List loading={isLoading} users={users} dataSource={list || []} />
+      <List
+        refresh={retry}
+        loading={isLoading}
+        users={users}
+        dataSource={list || []}
+      />
     </Container>
   );
 };
