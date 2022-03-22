@@ -12,9 +12,12 @@ import { useAsync } from "../../utils/use-async";
 import { useProjects } from "../../utils/project";
 import { useUrlQueryParam } from "../../utils/url";
 import { useProjectsSearchParams } from "./util";
+import { Row } from "../../components/lib";
 
 const apiUrl = process.env.REACT_APP_API_URL;
-export const ProjectListScreen = () => {
+export const ProjectListScreen = (props: {
+  setProjectModelOpen: (isOpen: boolean) => void;
+}) => {
   const [users, setUsers] = useState([]);
 
   //基本类型可以放在依赖里;组件状态可以放在依赖里;非组件组件状态的对象绝不可以放在依赖里
@@ -32,12 +35,18 @@ export const ProjectListScreen = () => {
   });
   return (
     <Container>
-      <h1>项目列表</h1>
+      <Row between={true}>
+        <h1>项目列表</h1>
+        <Button onClick={() => props.setProjectModelOpen(true)}>
+          创建项目
+        </Button>
+      </Row>
       <SearchPanel users={users || []} param={param} setParam={setParam} />
       {error ? (
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
       <List
+        setProjectModelOpen={props.setProjectModelOpen}
         refresh={retry}
         loading={isLoading}
         users={users}
