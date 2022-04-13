@@ -13,22 +13,22 @@ import { useProjects } from "../../utils/project";
 import { useUrlQueryParam } from "../../utils/url";
 import { useProjectsSearchParams } from "./util";
 import { Row } from "../../components/lib";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  projectListActions,
+  selectProjectModelOpen,
+} from "./project-list.slice";
 
 const apiUrl = process.env.REACT_APP_API_URL;
-export const ProjectListScreen = (props: {
-  setProjectModelOpen: (isOpen: boolean) => void;
-}) => {
+export const ProjectListScreen = () => {
   const [users, setUsers] = useState([]);
+  const projectModelOpen = useSelector(selectProjectModelOpen);
 
   //基本类型可以放在依赖里;组件状态可以放在依赖里;非组件组件状态的对象绝不可以放在依赖里
   const [param, setParam] = useProjectsSearchParams();
   const client = useHttp();
-  const {
-    isLoading,
-    error,
-    data: list,
-    retry,
-  } = useProjects(useDebounce(param, 200));
+  const { isLoading, error, data: list } = useProjects(useDebounce(param, 200));
+  const dispatch = useDispatch();
 
   useMount(() => {
     client("users").then(setUsers);
@@ -37,21 +37,13 @@ export const ProjectListScreen = (props: {
     <Container>
       <Row between={true}>
         <h1>项目列表</h1>
-        <Button onClick={() => props.setProjectModelOpen(true)}>
+        <Button onClick={() => dispatch(projectListActions.openProjectModel())}>
           创建项目
         </Button>
       </Row>
       <SearchPanel users={users || []} param={param} setParam={setParam} />
-      {error ? (
-        <Typography.Text type={"danger"}>{error.message}</Typography.Text>
-      ) : null}
-      <List
-        setProjectModelOpen={props.setProjectModelOpen}
-        refresh={retry}
-        loading={isLoading}
-        users={users}
-        dataSource={list || []}
-      />
+
+      <List loading={isLoading} users={users} dataSource={list || []} />
     </Container>
   );
 };

@@ -3,37 +3,26 @@ import { Button, Divider, List, Popover, Typography } from "antd";
 import { useProjects } from "../utils/project";
 import styled from "@emotion/styled";
 import { ButtonNoPadding } from "./lib";
+import { useDispatch } from "react-redux";
+import { projectListActions } from "../screens/project-list/project-list.slice";
 
-export const ProjectPopover = (props: {
-  setProjectModelOpen: (isOpen: boolean) => void;
-}) => {
+export const ProjectPopover = () => {
+  const dispatch = useDispatch();
   const { data: projects, isLoading } = useProjects();
-  const pinnedProjects = projects?.filter(
-    (project: { pin: any }) => project.pin
-  );
+  const pinnedProjects = projects?.filter((project) => project.pin);
   const content = (
     <ContentContainer>
       <Typography.Text type={"secondary"}>收藏项目</Typography.Text>
       <List>
-        {pinnedProjects?.map(
-          (project: {
-            name:
-              | boolean
-              | React.ReactChild
-              | React.ReactFragment
-              | React.ReactPortal
-              | null
-              | undefined;
-          }) => (
-            <List.Item>
-              <List.Item.Meta title={project.name} />
-            </List.Item>
-          )
-        )}
+        {pinnedProjects?.map((project) => (
+          <List.Item key={project.id}>
+            <List.Item.Meta title={project.name} />
+          </List.Item>
+        ))}
       </List>
       <Divider />
       <ButtonNoPadding
-        onClick={() => props.setProjectModelOpen(true)}
+        onClick={() => dispatch(projectListActions.openProjectModel())}
         type={"link"}
       >
         创建项目
