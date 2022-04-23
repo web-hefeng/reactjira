@@ -17,19 +17,13 @@ import { ProjectPopover } from "./components/project-popover";
  * */
 
 export const AuthenticatedApp = () => {
-  const [projectModelOpen, setProjectModelOpen] = useState(false);
   return (
     <Container>
-      <PageHeader setProjectModelOpen={setProjectModelOpen} />
-      <Main>
-        <Router>
+      <Router>
+        <PageHeader />
+        <Main>
           <Routes>
-            <Route
-              path={"/projects"}
-              element={
-                <ProjectListScreen setProjectModelOpen={setProjectModelOpen} />
-              }
-            />
+            <Route path={"/projects"} element={<ProjectListScreen />} />
             <Route
               path={"/projects/:projectId/*"}
               element={<ProjectScreen />}
@@ -40,19 +34,14 @@ export const AuthenticatedApp = () => {
             />
           </Routes>
           {/*<Navigate to={'/projects'}/>*/}
-        </Router>
-      </Main>
-      <ProjectModel
-        projectModelOpen={projectModelOpen}
-        onClose={() => setProjectModelOpen(false)}
-      />
+        </Main>
+        <ProjectModel />
+      </Router>
     </Container>
   );
 };
 
-const PageHeader = (props: {
-  setProjectModelOpen: (isOpen: boolean) => void;
-}) => {
+const PageHeader = () => {
   const { logout, user } = useAuth();
   return (
     <Header between={true}>
@@ -60,7 +49,7 @@ const PageHeader = (props: {
         <ButtonNoPadding type={"link"} onClick={resetRoute}>
           <SoftwareLogo width={"18rem"} color={"rgb(38,132,255)"} />
         </ButtonNoPadding>
-        <ProjectPopover setProjectModelOpen={props.setProjectModelOpen} />
+        <ProjectPopover />
         <span>用户</span>
       </HeaderLeft>
       <HeaderRight>
